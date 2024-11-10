@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include <mysql/mysql.h>
 #include "../../lib/socket/socket.h"
 #include "../../lib/messages/message.h"
@@ -15,6 +16,11 @@
 #define REGISTER_FAIL 2021
 #define CHANGE_PASSWORD_SUCCESS 1110
 #define CHANGE_PASSWORD_FAIL 2110
+
+void generateToken(char *username, char *token) {
+    time_t t = time(NULL);
+    sprintf(token, "%s%ld", username, t);
+}
 
 void handleRequest(MYSQL *conn, char *type, int connfd, char **username, char *password, listLoginedAccount *arr, node h){
     if(strcmp(type, "LOGIN") == 0){
@@ -35,20 +41,32 @@ void handleRequest(MYSQL *conn, char *type, int connfd, char **username, char *p
 
 void handleLogin(int connfd, listLoginedAccount *arr, node h, char **username, char *password){
     getLoginMessage(username, &password);
+
+    // Check login credentials (assuming this function checks if the user exists)
     int check = checkLogin(h, username, password, arr);
     printf("%d\n", check);
-    if(check == 0){
-        sendResult(connfd, LOGIN_FAIL);   
-    }else if(check == 1){
+
+    if (check == 0) {
+        sendResult(connfd, LOGIN_FAIL);  // No token for failed login
+    } else {
+        // Add user to the logged-in list
         addToListLoginedAccount(arr, username);
-        sendResult(connfd, LOGIN_SUCCESS_ADMIN);
-    }else if(check == 2){
-        addToListLoginedAccount(arr, username);
-        sendResult(connfd, LOGIN_SUCCESS_USER);
-    }else{
-        sendResult(connfd, LOGIN_ALREADY);
+
+        // Generate a token
+        char token[256];  // Assuming the token won't exceed 256 characters
+        generateToken(*username, token);
+
+        // Send result code and token to client
+        if (check == 1) {
+            sendResultWithToken(connfd, LOGIN_SUCCESS_ADMIN, token);
+        } else if (check == 2) {
+            sendResultWithToken(connfd, LOGIN_SUCCESS_USER, token);
+        } else {
+            sendResult(connfd, LOGIN_ALREADY);  // No token for already logged in
+        }
     }
 }
+
 
 void handleLogout(int connfd, listLoginedAccount *arr, char **username){
     printf("%s\n", *username);

@@ -51,14 +51,44 @@ void recvMessage(int fd, char *message) {
 
 void sendResult(int fd, int result) {
     int message = htonl(result);
-    
+
+    // Send the result code first
     printBorder();
     printf("SENDING RESULT\n");
     printf("------------------------------\n");
     printf("Result: %d\n", result);
     printBorder();
-    
-    send(fd, &message, sizeof(message), 0);       // Send the result
+
+    // Send the result code (integer)
+    send(fd, &message, sizeof(message), 0);
+}
+
+void sendResultWithToken(int fd, int result, char *token) {
+    int message = htonl(result);
+
+    // Send the result code first
+    printBorder();
+    printf("SENDING RESULT WITH TOKEN\n");
+    printf("------------------------------\n");
+    printf("Result: %d\n", result);
+    printf("Token: %s\n", token);
+    printBorder();
+
+    // Send the result code (integer)
+    send(fd, &message, sizeof(message), 0);
+
+    if (token != NULL) {
+        // If there's a token, send it after the result code
+        int tokenLength = strlen(token) + 1;  // Including null terminator
+
+        // Send the length of the token first
+        send(fd, &tokenLength, sizeof(tokenLength), 0);
+
+        // Send the token string
+        send(fd, token, tokenLength, 0);
+        
+        printf("Token: %s\n", token);  // Log the token for debugging
+    }
 }
 
 int recvResult(int fd) {
