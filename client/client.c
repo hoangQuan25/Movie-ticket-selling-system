@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 
     char conn_mess[1024];
     recv(sockfd, conn_mess, sizeof(conn_mess), 0);
-    printf("\n\n%s\n\n", conn_mess);
+    // printf("\n\n%s\n\n", conn_mess);
     int choice;
     int *login_status = 0;
     login_status = (int *)malloc(sizeof(int));

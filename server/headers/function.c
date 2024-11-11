@@ -25,9 +25,9 @@ void generateToken(char *username, char *token) {
 void handleRequest(MYSQL *conn, char *type, int connfd, char **username, char *password, listLoginedAccount *arr, node h){
     if(strcmp(type, "LOGIN") == 0){
         handleLogin(connfd, arr, h, username, password);
-        printf("username: %s\n", *username);
+        // printf("username: %s\n", *username);
     }else if(strcmp(type, "LOGOUT") == 0){
-        printf("username: %s\n", *username);
+        // printf("username: %s\n", *username);
         handleLogout(connfd, arr, username);
     }else if (strcmp(type, "REGISTER") == 0)
     {
@@ -44,7 +44,7 @@ void handleLogin(int connfd, listLoginedAccount *arr, node h, char **username, c
 
     // Check login credentials (assuming this function checks if the user exists)
     int check = checkLogin(h, username, password, arr);
-    printf("%d\n", check);
+    // printf("%d\n", check);
 
     if (check == 0) {
         sendResult(connfd, LOGIN_FAIL);  // No token for failed login
@@ -69,7 +69,7 @@ void handleLogin(int connfd, listLoginedAccount *arr, node h, char **username, c
 
 
 void handleLogout(int connfd, listLoginedAccount *arr, char **username){
-    printf("%s\n", *username);
+    // printf("%s\n", *username);
     deleteFromListLoginedAccount(arr, username);
     sendResult(connfd, LOGOUT_SUCCESS);
 }
@@ -110,7 +110,7 @@ void handleChangePassword(int connfd, MYSQL *conn, node *h){
     getChangePasswordMessage(&username, &oldPassword, &newPassword); // Hàm này cần được viết để phân tích tin nhắn
 
     int result = changePassword(conn, username, oldPassword, newPassword);
-    printf("%d\n", result);
+    // printf("%d\n", result);
     if (result == 1)
     {
         changeNodePassword(h, username, newPassword);

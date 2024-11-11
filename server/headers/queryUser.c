@@ -100,7 +100,7 @@ int checkLogin(node head, char **username, char *password, listLoginedAccount *a
 
     // Check account have loggined in different address or yet
     int check_logined = searchListLoginedAccount(arr, username);
-    printf("%d\n", check_logined);
+    // printf("%d\n", check_logined);
     if(check_logined >= 0){
         return 3;
     }
@@ -119,7 +119,7 @@ int checkLogin(node head, char **username, char *password, listLoginedAccount *a
         p = p->next;
     }
 
-    printf("%s\n", LOGIN_FAIL);
+    // printf("%s\n", LOGIN_FAIL);
     return 0;
 }
 
@@ -155,16 +155,14 @@ int changePassword(MYSQL *connection, char *username, char *oldPassword, char *n
     MYSQL_ROW row = mysql_fetch_row(result);
     if (!row || strcmp(row[0], oldPassword) != 0) {
         mysql_free_result(result);
-        printf("fghjk");
         return 0; // Mật khẩu cũ không chính xác
     }
-    printf("%s",row[0]);
+    // printf("%s",row[0]);
     mysql_free_result(result);
 
     // Cập nhật mật khẩu mới
     sprintf(query, "UPDATE users SET password = '%s' WHERE username = '%s'", newPassword, username);
     if (mysql_query(connection, query)) {
-        printf("kkk");
         return 0; // Thất bại
     }
 

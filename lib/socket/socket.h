@@ -6,5 +6,6 @@ void recvMessage(int fd, char *message);
 void sendResult(int fd, int result);
 void sendResultWithToken(int fd, int result, char *token);
 int recvResult(int fd);
+int recvResultWithToken(int fd, char *token);
 
 #endif

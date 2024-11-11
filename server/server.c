@@ -86,9 +86,9 @@ void *handleCommunicate(void* arg){
     free(arg);
     pthread_detach(pthread_self());
     if(connfd == -1){
-        perror("\nError: ");
+        // perror("\nError: ");
     }else{
-        printf("1000\n");
+        // printf("1000\n");
         send(connfd, "1000", 255, 0);
     }
 

@@ -21,13 +21,26 @@ void handleLogin(int sockfd, char *username, char *password, char *message, int 
     viewLogin(username, password);
     makeLoginMessage(username, password, message);
     sendMessage(sockfd, message);
-    *login_status = recvResult(sockfd);
-    if(*login_status == LOGIN_FAIL){
+
+    char token[256] = {0};  // Initialize to zero to ensure it's empty if no token is received
+
+    // Receive the result and the token
+    *login_status = recvResultWithToken(sockfd, token);
+
+    // Check the login status and display appropriate message
+    if (*login_status == LOGIN_FAIL) {
         printf("%s\n", LOGIN_FAIL_MESSAGE);
-    }else if(*login_status == LOGIN_ALREADY){
+    } else if (*login_status == LOGIN_ALREADY) {
         printf("%s\n", LOGIN_ALREADY_MESSAGE);
-    }else{
+    } else {
         printf("%s\n", LOGIN_SUCCESS_MESSAGE);
+
+        // Print the received token if login was successful
+        if (strlen(token) > 0) {
+            printf("Received Token: %s\n", token);
+        } else {
+            printf("No token received.\n");
+        }
     }
 }
 

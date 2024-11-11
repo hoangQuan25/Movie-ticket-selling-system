@@ -74,20 +74,18 @@ void sendResultWithToken(int fd, int result, char *token) {
     printf("Token: %s\n", token);
     printBorder();
 
-    // Send the result code (integer)
     send(fd, &message, sizeof(message), 0);
 
     if (token != NULL) {
         // If there's a token, send it after the result code
         int tokenLength = strlen(token) + 1;  // Including null terminator
+        int networkTokenLength = htonl(tokenLength); // Convert token length to network byte order
 
         // Send the length of the token first
-        send(fd, &tokenLength, sizeof(tokenLength), 0);
+        send(fd, &networkTokenLength, sizeof(networkTokenLength), 0);
 
         // Send the token string
         send(fd, token, tokenLength, 0);
-        
-        printf("Token: %s\n", token);  // Log the token for debugging
     }
 }
 
@@ -104,3 +102,46 @@ int recvResult(int fd) {
     
     return host_result;
 }
+
+int recvResultWithToken(int fd, char *token) {
+    int result;
+    int tokenLength = 0;
+
+    // Receive the result code
+    if (recv(fd, &result, sizeof(result), 0) <= 0) {
+        fprintf(stderr, "Error: Failed to receive result code\n");
+        return -1; // Return error code
+    }
+    result = ntohl(result);
+
+    // Receive the token length
+    if (recv(fd, &tokenLength, sizeof(tokenLength), 0) <= 0) {
+        fprintf(stderr, "Error: Failed to receive token length\n");
+        return -1; // Return error code
+    }
+    tokenLength = ntohl(tokenLength);
+
+    // Check if token length is within bounds
+    if (tokenLength <= 0 || tokenLength > 255) {
+        fprintf(stderr, "Error: Invalid token length received: %d\n", tokenLength);
+        return -1; // Return error code
+    }
+
+    // Receive the token itself
+    if (recv(fd, token, tokenLength, 0) <= 0) {
+        fprintf(stderr, "Error: Failed to receive token data\n");
+        return -1; // Return error code
+    }
+    token[tokenLength] = '\0'; // Null-terminate token
+
+    // Print token for debugging
+    printBorder();
+    printf("RECEIVED RESULT WITH TOKEN\n");
+    printf("------------------------------\n");
+    printf("Result from Server: %d\n", result);
+    printf("Token: %s\n", token);
+    printBorder();
+
+    return result;
+}
+
