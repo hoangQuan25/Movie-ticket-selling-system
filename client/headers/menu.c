@@ -31,12 +31,20 @@ void viewRegister(char *name, char *username, char *password) {
     printf("Đăng ký\n");
     printf("Họ và tên: ");
     memset(name, 0, 255);
-    fgets(name, 255, stdin);   
+    fgets(name, 255, stdin);
+    
+    // Remove the newline character from 'name' if present
+    size_t length = strlen(name);
+    if (length > 0 && name[length - 1] == '\n') {
+        name[length - 1] = '\0';
+    }
+    
     printf("Username: ");
     scanf("%s", username);
     printf("Mật khẩu: ");
     scanf("%s", password);
 }
+
 
 void viewAdmin(){
     printf("--------------Hệ thống đặt vé xem phim CinemaNet------------------\n\n");

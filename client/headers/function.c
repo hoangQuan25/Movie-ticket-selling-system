@@ -71,7 +71,7 @@ void handleRequestUser(int sockfd, char *username, char *password, char *message
                 break;
             }
             case 5:{
-                printf("%s\n", username);
+                // printf("%s\n", username);
                 handleChangePassword(sockfd, username, message);
                 break;
             }

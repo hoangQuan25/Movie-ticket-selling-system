@@ -17,8 +17,8 @@ void sendMessage(int fd, char *message) {
     printBorder();
     printf("SENDING MESSAGE\n");
     printf("------------------------------\n");
-    printf("Message Length (Original): %d\n", ntohl(length));
-    printf("Message Content:\n\"%s\"\n", message);
+    // printf("Message Length (Original): %d\n", ntohl(length));
+    printf("Message Content:\n%s\n", message);
     printBorder();
     
     send(fd, &length, sizeof(length), 0);  // Send the length
@@ -36,12 +36,12 @@ void recvMessage(int fd, char *message) {
     printBorder();
     printf("RECEIVING MESSAGE\n");
     printf("------------------------------\n");
-    printf("Message Length (Received): %d\n", msg_len);
+    // printf("Message Length (Received): %d\n", msg_len);
 
     if (msg_len > 0 && msg_len < BUFSIZE) {
         recv(fd, buffer, msg_len, 0);             // Receive the message
         buffer[msg_len] = '\0';                   // Null-terminate the string
-        printf("Message Content: \"%s\"\n", buffer);
+        printf("Message Content: %s\n", buffer);
         strcpy(message, buffer);                  // Copy to message buffer
     } else {
         fprintf(stderr, "Error: Received message length out of range\n");
@@ -56,7 +56,7 @@ void sendResult(int fd, int result) {
     printBorder();
     printf("SENDING RESULT\n");
     printf("------------------------------\n");
-    printf("Result: %d\n", result);
+    printf("%d\n", result);
     printBorder();
 
     // Send the result code (integer)
@@ -70,8 +70,8 @@ void sendResultWithToken(int fd, int result, char *token) {
     printBorder();
     printf("SENDING RESULT WITH TOKEN\n");
     printf("------------------------------\n");
-    printf("Result: %d\n", result);
-    printf("Token: %s\n", token);
+    printf("%d\n", result);
+    printf("%s\n", token);
     printBorder();
 
     send(fd, &message, sizeof(message), 0);
@@ -97,7 +97,7 @@ int recvResult(int fd) {
     printBorder();
     printf("RECEIVED RESULT\n");
     printf("------------------------------\n");
-    printf("Result from Server: %d\n", host_result);
+    printf("%d\n", host_result);
     printBorder();
     
     return host_result;
@@ -138,8 +138,8 @@ int recvResultWithToken(int fd, char *token) {
     printBorder();
     printf("RECEIVED RESULT WITH TOKEN\n");
     printf("------------------------------\n");
-    printf("Result from Server: %d\n", result);
-    printf("Token: %s\n", token);
+    printf("%d\n", result);
+    printf("%s\n", token);
     printBorder();
 
     return result;
